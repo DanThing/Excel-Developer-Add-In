@@ -1,6 +1,6 @@
 # Excel-Developer-Add-In
 
-##Modules and their Proceedures
+## Modules and their Proceedures
 
 AddIn_MAIN
 - SpeedUp
@@ -36,7 +36,7 @@ AddIn_Settings
 - LicencingForm
 -----------------------------------
 
-##Userforms and Methods
+## Userforms and Methods
 
 AddIn_SettingForm
 - btn_chkUpdates_Click
@@ -62,9 +62,9 @@ CreateNewHelpForm
 - Edit
 -----------------------------------
 
-##Settings
+## Settings
 
-**Setting Name** |**Setting Value** |**Variable Type **|**Variable Name**
+**Setting Name**|**Setting Value**|**Variable Type**|**Variable Name**
 EnableLogging |True |Boolean |opt_enablelogging
 EnableContextMenu |True |Boolean |opt_enablecontextmenu
 EnableExportThisWS |True |Boolean |opt_ExportThisWS
@@ -91,7 +91,7 @@ Boolean4 | |Boolean |
 Boolean5 | |Boolean |
 -----------------------------------
 
-##VBA Library References
+## VBA Library References
 
 Description   Microsoft Excel 16.0 Object Library
 - FullPath   C:\Program Files\Microsoft Office\Root\Office16\EXCEL.EXE
