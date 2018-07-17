@@ -1,4 +1,7 @@
-# Excel-Developer-Add-In
+# Excel Developer AddIn
+
+This is a work in progress at this stage.
+I am planning on setting this up as an AddIn developement template.
 
 ## Modules and their Proceedures
 
