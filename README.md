@@ -63,6 +63,7 @@ CreateNewHelpForm
 -----------------------------------
 
 ##Settings
+
 **Setting Name** |**Setting Value** |**Variable Type **|**Variable Name**
 EnableLogging |True |Boolean |opt_enablelogging
 EnableContextMenu |True |Boolean |opt_enablecontextmenu
