@@ -15,10 +15,6 @@ Attribute VB_Name = "AddIn_MAIN"
 
 Option Explicit
 
-Public SuperSessionData As Worksheet
-Public SuperSessionId As Variant
-Public SuperSessionChange As Variant
-
 Public AddInSettings As AddIn_SettingForm
 Public EnableLogging As Boolean
 Public Logger As LogForm
