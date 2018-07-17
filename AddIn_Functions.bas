@@ -10,11 +10,8 @@ Attribute VB_Name = "AddIn_Functions"
 ' - AddIn_Functions
 '    - OperationCompleted
 '    - OperationCancelled
-'    - RemoveRMUR
 '    - ExportThisWS
 '    - DiffBetween
-'    - kAccuracy
-'    - CheckForSupersession
 '    - WSExists
 '    - IsWorkBookOpen
 '    - openWB
@@ -26,8 +23,6 @@ Attribute VB_Name = "AddIn_Functions"
 '    - ClearNameRngs
 '    - FS
 '    - getArrayHeader
-'    - RemoveSelectRMUR
-'    - chkSelectSupersession
 '    - DisabledFunction
 '-----------------------------------
 '===================================
@@ -44,28 +39,6 @@ MsgBox "Operation has been cancelled by User.", vbOKOnly, Company
 SpeedUp False
 End
 End Sub
-
-'===================================
-' Removes the sufix of either 'RM' or 'UR' from an itemcode
-'
-' - @method RemoveRMUR
-'   - @param {Variant} itemcode
-' - @returns {String} RemveRMUR
-'===================================
-Function RemoveRMUR(itemcode As Variant) As String
-Dim a As Long
-    a = InStr(5, itemcode, "RM", vbTextCompare)
-    If a > 6 Then
-        RemoveRMUR = Left(itemcode, a - 1)
-        Exit Function
-    End If
-    a = InStrRev(itemcode, "UR", , vbTextCompare)
-    If a > 6 Then
-         RemoveRMUR = Left(itemcode, a - 1)
-        Exit Function
-    End If
-    RemoveRMUR = itemcode
-End Function
 
 '===================================
 ' Exports a copy of the active worksheet without formulas
@@ -95,72 +68,6 @@ With Application.WorksheetFunction
     snd = .Min(firstValue, secondValue)
 End With
 DiffBetween = fst - snd
-End Function
-
-'===================================
-' This function is used for the OV accuracy report only.
-' The math is as verbally supplied by Yoshikatsu Kinya 17/04/2018
-'
-' - @method kAccuracy
-'   - @param {Variant} planned
-'   - @param {Variant} actual
-' - @returns {Double}
-'===================================
-Public Function kAccuracy(planned As Variant, actual As Variant) As Double
-If planned > actual Then
-    kAccuracy = (actual - planned) / planned
-Else
-    kAccuracy = actual / planned
-End If
-If kAccuracy > 1 Then _
-    kAccuracy = 0
-End Function
-
-'===================================
-' This function is used to get the superseeding or preseeding part number
-' for a provide partnumber.
-'
-' This will return a single answer as string if getAll = False.
-' This will return an array of all results if getAll = True.
-'
-' - @method CheckForSupersession
-'   - @param {Variant} sku
-'   - @param [{XlSearchDirection}] direction (xlNext = 1, xlPrevious = 2)
-'   - @param [{boolean}] getAll
-' - @returns {variant}
-
-Private Function CheckForSupersession(sku As Variant, Optional supersession_direction As XlSearchDirection = xlNext, Optional getAll As Boolean = False) As Variant
-Attribute CheckForSupersession.VB_Description = "Checks to see if the item code(s) selected have been superseeded. This returns the latest Item Code."
-On Error GoTo errExit
-Dim aCount As Long
-Dim tempStr As String
-reDo:
-    For aCount = LBound(SuperSessionId) To UBound(SuperSessionId)
-        If SuperSessionId(aCount, 1) = sku Then
-            If SuperSessionChange(aCount, direction) = "" Then
-                GoTo notFound
-            Else
-                sku = SuperSessionChange(aCount, supersession_direction)
-                If getAll = True Then
-                    tempStr = tempStr & sku & ","
-                Else
-                    tempStr = sku
-                End If
-                GoTo reDo
-            End If
-        End If
-    Next aCount
-    
-safeExit:
-    CheckForSupersession = tempStr
-Exit Function
-    
-notFound:
-    CheckForSupersession = sku
-Exit Function
-
-errExit:
-    errHandler Err
 End Function
 
 '===================================
@@ -368,108 +275,6 @@ errExit:
     getArrayHeader = 0
     Err.Raise CustomError.Err4, "getArrayHeader"
 End Function
-
-'===================================
-' Function to remove the suffix 'RM' and 'UR' from a selection range.
-'
-' - @method RemoveSelectRMUR
-
-Sub RemoveSelectRMUR()
-Dim progBar As ProgressBar
-Dim sel As Variant
-Dim sCount As Long
-Dim temp As String
-    On Error GoTo errExit
-    If Selection.Count < 1 Then
-        Err.Raise CustomError.Err5, "RemoveRMUR", "Selection contains no data."
-    End If
-    Set progBar = New ProgressBar
-    With progBar
-        .Top = Selection.Parent.Application.Top + 100
-        .Left = Selection.Parent.Application.Left + 100
-        .Title = Company
-        .TotalActions = Selection.Cells().Count
-        .showbar
-        .StatusMessage = "Removing RM/UR from itemcodes."
-    End With
-    sel = Selection.value
-    For sCount = LBound(sel) To UBound(sel)
-        progBar.NextAction
-        temp = sel(sCount, 1)
-        temp = RemoveRMUR(temp)
-        sel(sCount, 1) = temp
-    Next sCount
-    Selection = sel
-safeExit:
-    progBar.Terminate
-    OperationCompleted
-Exit Sub
-
-errExit:
-    progBar.Terminate
-    errHandler Err
-End Sub
-
-'===================================
-' Function to return the latest Supersession for a selection range.
-'
-' - @method chkSelectSupersession
-
-Sub chkSelectSupersession()
-Dim wb As Workbook
-Dim progBar As ProgressBar
-Dim direction As XlSearchDirection
-Dim cel As Range
-Dim sel As Variant
-Dim sCount As Long, lr As Long
-Dim temp As String
-    On Error GoTo errExit
-    If Selection.Cells().Count < 1 Then
-        Err.Raise CustomError.Err5, "chkSelectSupersession", "Selection contains no data."
-    End If
-    Set progBar = New ProgressBar
-    With progBar
-        .Top = Selection.Parent.Application.Top + 100
-        .Left = Selection.Parent.Application.Left + 100
-        .Title = Company
-        .TotalActions = Selection.Cells().Count
-        .showbar
-        .StatusMessage = "Getting Supersession data from Komunity."
-    End With
-    On Error Resume Next
-        Set wb = openWB(getSetting(URL3_))
-        Set SuperSessionData = wb.Worksheets("ItemList")
-    On Error GoTo errExit
-    If Err <> 0 Then Err.Raise CustomError.Err2
-    lr = Lastrow(SuperSessionData)
-    With SuperSessionData
-        SuperSessionId = .Range(.Cells(2, 1), .Cells(lr, 1)).value
-        SuperSessionChange = .Range(.Cells(2, 7), .Cells(lr, 8)).value
-    End With
-    If Selection.Cells().Count = 1 Then
-        Set cel = Selection
-        cel = Application.Run("CheckForSupersession", Selection)
-        GoTo safeExit
-    End If
-    Set cel = Nothing
-    sel = Selection.value
-        For sCount = LBound(sel) To UBound(sel)
-            progBar.NextAction
-            temp = sel(sCount, 1)
-            temp = Application.Run("CheckForSupersession", temp)
-            sel(sCount, 1) = temp
-        Next sCount
-    Selection = sel
-safeExit:
-    wb.Close False
-    progBar.Terminate
-    OperationCompleted
-Exit Sub
-
-errExit:
-    progBar.Terminate
-    errHandler Err
-End Sub
 
 '===================================
 ' Function to alert a user that a selected
