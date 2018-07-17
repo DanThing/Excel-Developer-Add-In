@@ -39,26 +39,16 @@ AddIn_Settings
 ## Userforms and Methods
 
 AddIn_SettingForm
-- btn_chkUpdates_Click
-- btn_update_Click
 - UserForm_Initialize
 
 LogForm
-- btn_projectdump_Click
-- copyBtn_Click
 - UserForm_Initialize
 - updateText
 
-LicenceForm
-
 HelpForm
-- btn_New_Click
-- HelpCombo1_Change
 - UserForm_Initialize
 
 CreateNewHelpForm
-- btn_Delete_Click
-- btn_Save_Click
 - Edit
 -----------------------------------
 
