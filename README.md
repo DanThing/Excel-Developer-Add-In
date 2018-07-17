@@ -64,11 +64,12 @@ CreateNewHelpForm
 
 ## Settings
 
-**Setting Name|Setting Value|Variable Type|Variable Name**
-EnableLogging |True |Boolean |opt_enablelogging
-EnableContextMenu |True |Boolean |opt_enablecontextmenu
-EnableExportThisWS |True |Boolean |opt_ExportThisWS
-CompanyName |Name of the Company |String |CompanyName
+| Setting Name | Setting Value | Variable Type | Variable Name |
+| --- | --- | --- | --- |
+| EnableLogging | True | Boolean | opt_enablelogging |
+| EnableContextMenu | True | Boolean | opt_enablecontextmenu |
+| EnableExportThisWS | True | Boolean | opt_ExportThisWS |
+|CompanyName | Name of the Company | String | CompanyName |
 URL1 | http:\\www.companyurl.com |String |URL1_
 URL2 ||String |URL2_
 URL3 ||String |URL3_
@@ -89,6 +90,7 @@ Boolean2 | |Boolean |
 Boolean3 | |Boolean |
 Boolean4 | |Boolean |
 Boolean5 | |Boolean |
+
 -----------------------------------
 
 ## VBA Library References
